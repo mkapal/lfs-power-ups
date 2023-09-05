@@ -31,8 +31,10 @@ export class PowerUps {
       ObjectIndex.AXO_CONE_YELLOW,
     ];
 
-    const isLayoutObject = packet.OBHFlags & ObjectHitFlags.OBH_LAYOUT;
-    const isObjectOnSpot = packet.OBHFlags & ObjectHitFlags.OBH_ON_SPOT;
+    const isLayoutObject = Boolean(packet.OBHFlags & ObjectHitFlags.OBH_LAYOUT);
+    const isObjectOnSpot = Boolean(
+      packet.OBHFlags & ObjectHitFlags.OBH_ON_SPOT,
+    );
     const isTriggerObject = triggerObjects.includes(packet.Index);
 
     if (!isLayoutObject || !isTriggerObject || !isObjectOnSpot) {

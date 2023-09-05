@@ -16,7 +16,7 @@ import { App } from "./App";
 const inSim = new InSim();
 
 inSim.connect({
-  IName: "LFS Carmageddon",
+  IName: "LFS PowerUps",
   Host: process.env.HOST ?? "127.0.0.1",
   Port: process.env.PORT ? parseInt(process.env.PORT) : 29999,
   ReqI: IS_ISI_ReqI.SEND_VERSION,

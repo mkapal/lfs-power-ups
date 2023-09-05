@@ -1,4 +1,4 @@
-import { PlayersAndConnections } from "./playersAndConnections";
+import { PlayersAndConnections } from "./PlayersAndConnections";
 import { InSim } from "node-insim";
 import { IS_MST } from "node-insim/packets";
 
@@ -12,8 +12,8 @@ export class App {
   }
 
   public sendRaceControlMessage(
-    text: string,
     userName: string,
+    text: string,
     timeout?: number,
   ) {
     this.inSim.send(new IS_MST({ Msg: `/rcm ${text}` }));

@@ -34,7 +34,8 @@ function onVersion(packet: IS_VER, inSim: InSim) {
   requestPlayersAndConnections(inSim);
 
   const app = new App(inSim);
-  new PowerUps(app, defaultPowerUps);
+  const powerUps = defaultPowerUps(inSim);
+  new PowerUps(app, powerUps);
 }
 
 function logVersion(packet: IS_VER) {

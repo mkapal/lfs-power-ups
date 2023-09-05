@@ -8,11 +8,7 @@ import {
 } from "node-insim/packets";
 import { log } from "../log";
 import { App } from "../App";
-
-export type PowerUp = {
-  name: string;
-  action: (packet: IS_OBH, inSim: InSim) => void;
-};
+import { PowerUp } from "./PowerUp";
 
 export class PowerUps {
   private readonly app: App;
@@ -26,34 +22,43 @@ export class PowerUps {
   }
 
   private onObjectHit = (packet: IS_OBH, inSim: InSim) => {
-    const isObjectOnSpot = packet.OBHFlags & ObjectHitFlags.OBH_ON_SPOT;
+    const RACE_CONTROL_MESSAGE_DURATION_MS = 3000;
+
+    const triggerObjects: ObjectIndex[] = [
+      ObjectIndex.AXO_CONE_GREEN,
+      ObjectIndex.AXO_CONE_RED,
+      ObjectIndex.AXO_CONE_BLUE,
+      ObjectIndex.AXO_CONE_YELLOW,
+    ];
+
     const isLayoutObject = packet.OBHFlags & ObjectHitFlags.OBH_LAYOUT;
+    const isObjectOnSpot = packet.OBHFlags & ObjectHitFlags.OBH_ON_SPOT;
+    const isTriggerObject = triggerObjects.includes(packet.Index);
 
-    if (
-      isLayoutObject &&
-      packet.Index === ObjectIndex.AXO_CONE_GREEN &&
-      isObjectOnSpot
-    ) {
-      const randomPowerUp =
-        this.powerUps[Math.floor(Math.random() * this.powerUps.length)];
-
-      randomPowerUp.action(packet, inSim);
-
-      const connection = this.app.playersAndConnections.getConnectionByPLID(
-        packet.PLID,
-      );
-      const playerName = connection?.PName;
-
-      if (!playerName) {
-        log(`Error: No connection found for PLID ${packet.PLID}`);
-        return;
-      }
-
-      inSim.send(
-        new IS_MTC({ UCID: 255, Text: `${playerName} got a power-up!` }),
-      );
-
-      this.app.sendRaceControlMessage(randomPowerUp.name, playerName, 3000);
+    if (!isLayoutObject || !isTriggerObject || !isObjectOnSpot) {
+      return;
     }
+
+    const randomPowerUpId = Math.floor(Math.random() * this.powerUps.length);
+    const randomPowerUp = this.powerUps[randomPowerUpId];
+    randomPowerUp.execute(packet, inSim);
+
+    const targetConnection = this.app.playersAndConnections.getConnectionByPLID(
+      packet.PLID,
+    );
+    const userName = targetConnection?.UName;
+
+    if (!userName) {
+      log(`Error: No connection found for PLID ${packet.PLID}`);
+      return;
+    }
+
+    inSim.send(new IS_MTC({ UCID: 255, Text: `${userName} got a power-up!` }));
+
+    this.app.sendRaceControlMessage(
+      userName,
+      randomPowerUp.name,
+      RACE_CONTROL_MESSAGE_DURATION_MS,
+    );
   };
 }

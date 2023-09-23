@@ -1,1 +1,1 @@
-export { HayBale } from "./HayBale";
+export { hayBale } from "./hayBale";

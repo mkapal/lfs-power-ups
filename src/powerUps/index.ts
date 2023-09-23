@@ -1,2 +1,1 @@
-export { PowerUps } from "./PowerUps";
-export { defaultPowerUps } from "./defaultPowerUps";
+export { powerUps } from "./powerUps";

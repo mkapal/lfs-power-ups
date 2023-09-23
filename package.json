@@ -7,17 +7,32 @@
   "scripts": {
     "dev": "tsx watch ./src/index.ts",
     "serve:production": "node ./dist/index.cjs",
-    "build": "tsup-node src/index.ts --dts"
+    "build": "tsup-node src/index.ts --dts",
+    "check-all": "run-s format lint:fix",
+    "format": "run-s \"format:no-write --write\"",
+    "format:no-write": "prettier \"./**/*.{ts,md,json,yml,yaml}\"",
+    "format:check": "run-s \"format:no-write --check\"",
+    "lint": "eslint \"./src/**/*\" --ext .js,.ts",
+    "lint:fix": "eslint \"./src/**/*\" --ext .js,.ts --fix"
   },
   "dependencies": {
     "debug": "^4.3.4",
     "dotenv": "^16.3.1",
     "node-insim": "^3.0.0",
+    "ramda": "^0.29.0",
+    "rxjs": "^7.8.1",
     "supports-color": "^9.4.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.8",
     "@types/node": "^20.4.0",
+    "@types/ramda": "^0.29.4",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
     "prettier": "^3.0.0",
     "tsup": "^7.1.0",
     "tsx": "^3.12.7",

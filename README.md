@@ -45,19 +45,19 @@ If you drive over them, one of the following random features gets activated:
 ### Requirements
 
 - Node.js v18
-- Yarn v1
+- pnpm
 - LFS
 
 ### Installation
 
 ```shell
-yarn
+pnpm install
 ```
 
 ### Development build
 
 ```shell
-yarn dev
+pnpm dev
 ```
 
 The app connects to `127.0.0.1:29999` by default.
@@ -65,6 +65,6 @@ The app connects to `127.0.0.1:29999` by default.
 ### Production build
 
 ```shell
-yarn build
-yarn serve:production
+pnpm build
+pnpm serve:production
 ```

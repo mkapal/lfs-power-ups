@@ -1,27 +1,39 @@
-import { InSim } from "node-insim";
-import {
-  IS_MTC,
-  IS_OBH,
-  ObjectHitFlags,
-  ObjectIndex,
-  PacketType,
-} from "node-insim/packets";
-import { log } from "../log";
-import { App } from "../App";
-import { PowerUp } from "./PowerUp";
+import type { InSim } from "node-insim";
+import type { IS_OBH } from "node-insim/packets";
+import { ObjectHitFlags, ObjectIndex, PacketType } from "node-insim/packets";
 
-export class PowerUps {
-  private readonly app: App;
-  private readonly powerUps: PowerUp[] = [];
+import type { CommonDependencies } from "../application";
+import type { MessageSystem } from "../messages";
+import type { RaceTracking } from "../raceTracking";
+import type { PowerUp } from "./types";
 
-  constructor(app: App, powerUps: PowerUp[]) {
-    this.app = app;
-    this.powerUps = powerUps;
+type PowerUpsDependencies = CommonDependencies & {
+  raceTracking: RaceTracking;
+  messages: MessageSystem;
+};
 
-    app.inSim.on(PacketType.ISP_OBH, this.onObjectHit);
-  }
+export function powerUps(deps: PowerUpsDependencies, powerUpList: PowerUp[]) {
+  const { inSim } = deps;
 
-  private onObjectHit = (packet: IS_OBH, inSim: InSim) => {
+  const log = deps.log.extend("powerUps");
+
+  const depsWithLogger = { ...deps, log };
+
+  inSim.on(PacketType.ISP_OBH, onObjectHit(depsWithLogger, powerUpList));
+}
+
+const onObjectHit =
+  (
+    {
+      log,
+      messages: { sendMessageToConnection, sendRaceControlMessage },
+      raceTracking: { getConnectionByPLID },
+    }: PowerUpsDependencies,
+    powerUpList: PowerUp[],
+  ) =>
+  (packet: IS_OBH, inSim: InSim) => {
+    log("Object hit");
+
     const RACE_CONTROL_MESSAGE_DURATION_MS = 3000;
 
     const triggerObjects: ObjectIndex[] = [
@@ -41,13 +53,11 @@ export class PowerUps {
       return;
     }
 
-    const randomPowerUpId = Math.floor(Math.random() * this.powerUps.length);
-    const randomPowerUp = this.powerUps[randomPowerUpId];
-    randomPowerUp.execute(packet, inSim);
+    const randomPowerUpId = Math.floor(Math.random() * powerUpList.length);
+    const randomPowerUp = powerUpList[randomPowerUpId];
+    randomPowerUp.execute(log)(packet, inSim);
 
-    const targetConnection = this.app.playersAndConnections.getConnectionByPLID(
-      packet.PLID,
-    );
+    const targetConnection = getConnectionByPLID(packet.PLID);
     const userName = targetConnection?.UName;
 
     if (!userName) {
@@ -55,12 +65,14 @@ export class PowerUps {
       return;
     }
 
-    inSim.send(new IS_MTC({ UCID: 255, Text: `${userName} got a power-up!` }));
+    sendMessageToConnection(
+      targetConnection?.UCID,
+      `${userName} got a power-up!`,
+    );
 
-    this.app.sendRaceControlMessage(
+    sendRaceControlMessage(
       userName,
       randomPowerUp.name,
       RACE_CONTROL_MESSAGE_DURATION_MS,
     );
   };
-}

@@ -1,11 +1,12 @@
 import type { InSim } from "node-insim";
 import type { IS_OBH } from "node-insim/packets";
-
-import type { CommonDependencies } from "../application";
+import type { useConnections } from "react-node-insim";
 
 export type PowerUp = {
   name: string;
   execute: (
-    log: CommonDependencies["log"],
-  ) => (packet: IS_OBH, inSim: InSim) => void;
+    packet: IS_OBH,
+    inSim: InSim,
+    connections: ReturnType<typeof useConnections>,
+  ) => void;
 };

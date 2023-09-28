@@ -5,9 +5,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "tsx watch ./src/index.ts",
+    "dev": "tsx watch src/index.tsx",
     "serve:production": "node ./dist/index.cjs",
-    "build": "tsup-node src/index.ts --dts",
+    "build": "tsup-node src/index.tsx --dts",
     "check-all": "run-s format lint:fix",
     "format": "run-s \"format:no-write --write\"",
     "format:no-write": "prettier \"./**/*.{ts,md,json,yml,yaml}\"",
@@ -18,15 +18,16 @@
   "dependencies": {
     "debug": "^4.3.4",
     "dotenv": "^16.3.1",
-    "node-insim": "^3.0.0",
-    "ramda": "^0.29.0",
-    "rxjs": "^7.8.1",
-    "supports-color": "^9.4.0"
+    "node-insim": "3.0.0",
+    "react": "^18.2.0",
+    "react-node-insim": "file:.yalc/react-node-insim",
+    "supports-color": "^9.4.0",
+    "tiny-typed-emitter": "^2.1.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.8",
     "@types/node": "^20.4.0",
-    "@types/ramda": "^0.29.4",
+    "@types/react": "18.2.21",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "@typescript-eslint/parser": "^6.7.2",
     "eslint": "^8.50.0",

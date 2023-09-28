@@ -17,20 +17,21 @@ If you drive over them, one of the following random features gets activated:
 * Random points bonus
 * Health bonus
 * Lucky dog (get a lap back if one or more laps behind)
-* Inatke restriction for X seconds
+* Intake restriction for X seconds
 * Mass handicap for X seconds
 * Cars within a certain distance behind will gain points for X seconds
 
 # Car health
 
 * Car health is based on contacts with other cars or walls. You lose health by crashing into other cars or objects / walls. You can gain health by driving over a pick-up object with health bonus.
-* Quick repair zones
-* If you stop in that zone, you get instant car repair + full health.
+
+# Misc
+
 * Sections of track guarded by start lights
-* when the lights go red, you lose points when driving through it
-* when the lights go green, you gain points when driving through it
+  * When the lights go red, you lose points when driving through it
+  * When the lights go green, you gain points when driving through it
 * Sections of track with maximum speed
-* if going over that speed, you lose points.
+  * If going over that speed, you lose points.
 
 ## Bonus points
 

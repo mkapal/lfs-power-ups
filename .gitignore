@@ -1,4 +1,5 @@
 dist/
 node_modules/
+.yalc/
 .env.local
-.pnpm-debug.log*
+yalc.lock

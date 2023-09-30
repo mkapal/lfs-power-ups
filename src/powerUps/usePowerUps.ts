@@ -1,17 +1,21 @@
 import type { InSim } from "node-insim";
 import type { IS_OBH } from "node-insim/packets";
 import { ObjectHitFlags, ObjectIndex, PacketType } from "node-insim/packets";
-import { useConnections, useOnPacket, usePlayers } from "react-node-insim";
+import {
+  useConnections,
+  useOnPacket,
+  usePlayers,
+  useRaceControlMessage,
+} from "react-node-insim";
 
 import { log } from "../log";
-import { useMessages } from "../messages";
 import type { PowerUp } from "./types";
 
 export function usePowerUps(powerUps: PowerUp[]) {
   const connections = useConnections();
   const players = usePlayers();
+  const { sendRaceControlMessage } = useRaceControlMessage();
 
-  const { sendRaceControlMessage } = useMessages();
   useOnPacket(PacketType.ISP_OBH, onObjectHit(powerUps));
 
   function onObjectHit(powerUps: PowerUp[]) {
@@ -57,10 +61,8 @@ export function usePowerUps(powerUps: PowerUp[]) {
         return;
       }
 
-      const userName = targetConnection.UName;
-
       sendRaceControlMessage(
-        userName,
+        targetConnection,
         randomPowerUp.name,
         RACE_CONTROL_MESSAGE_DURATION_MS,
       );

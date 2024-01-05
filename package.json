@@ -41,5 +41,5 @@
     "**/*.js",
     "**/*.d.ts"
   ],
-  "packageManager": "pnpm@8.14.0+sha256.9cebf61abd83f68177b29484da72da9751390eaad46dfc3072d266bfbb1ba7bf"
+  "packageManager": "yarn@1.22.21+sha256.dbed5b7e10c552ba0e1a545c948d5473bc6c5a28ce22a8fd27e493e3e5eb6370"
 }

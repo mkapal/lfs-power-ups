@@ -45,7 +45,7 @@ If you drive over them, one of the following random features gets activated:
 
 ### Requirements
 
-- Node.js v18
+- Node.js v20
 - pnpm
 - LFS
 

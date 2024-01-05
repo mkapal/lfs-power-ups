@@ -1,5 +1,5 @@
 {
-  "name": "node-insim-example-insim-connection-ts",
+  "name": "lfs-power-ups",
   "version": "0.0.0",
   "main": "dist/index.cjs",
   "type": "module",
@@ -18,14 +18,14 @@
   "dependencies": {
     "debug": "^4.3.4",
     "dotenv": "^16.3.1",
-    "node-insim": "3.0.0",
+    "node-insim": "4.0.0",
     "react": "^18.2.0",
-    "react-node-insim": "file:.yalc/react-node-insim"
+    "react-node-insim": "*"
   },
   "devDependencies": {
     "@types/debug": "^4.1.8",
     "@types/node": "^20.4.0",
-    "@types/react": "18.2.21",
+    "@types/react": "18.2.46",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "@typescript-eslint/parser": "^6.7.2",
     "eslint": "^8.50.0",
@@ -33,12 +33,13 @@
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "prettier": "^3.0.0",
-    "tsup": "^7.2.0",
-    "tsx": "^3.12.7",
+    "tsup": "^8.0.1",
+    "tsx": "^4.7.0",
     "typescript": "^5.1.6"
   },
   "files": [
     "**/*.js",
     "**/*.d.ts"
-  ]
+  ],
+  "packageManager": "pnpm@8.14.0+sha256.9cebf61abd83f68177b29484da72da9751390eaad46dfc3072d266bfbb1ba7bf"
 }

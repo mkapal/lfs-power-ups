@@ -2,7 +2,7 @@ import { IS_MTC, MessageSound } from "node-insim/packets";
 import { Button, useOnConnect } from "react-node-insim";
 
 import { log } from "./log";
-import { fakePowerUp, hayBale, reset, usePowerUps } from "./powerUps";
+import { usePowerUps } from "./powerUps";
 
 const appName = "LFS PowerUps v0.0.1";
 
@@ -18,12 +18,7 @@ export function App() {
     );
   });
 
-  usePowerUps([
-    //
-    hayBale,
-    reset,
-    fakePowerUp,
-  ]);
+  usePowerUps();
 
   return (
     <>

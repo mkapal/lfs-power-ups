@@ -8,64 +8,75 @@ import {
   useRaceControlMessage,
 } from "react-node-insim";
 
+import { useLayout } from "../layout";
 import { log } from "../log";
+import { fakePowerUp, hayBale, reset } from "./powerUps";
 import type { PowerUp } from "./types";
 
-export function usePowerUps(powerUps: PowerUp[]) {
+const powerUps: PowerUp[] = [
+  {
+    name: "^3Hay Bale!",
+    execute: hayBale,
+  },
+  {
+    name: "^3Reset!",
+    execute: reset,
+  },
+  {
+    name: "^3Fake PowerUp!",
+    execute: fakePowerUp,
+  },
+];
+
+export function usePowerUps() {
   const connections = useConnections();
   const players = usePlayers();
-  const { sendRaceControlMessage } = useRaceControlMessage();
+  const { sendRaceControlMessageToConnection } = useRaceControlMessage();
+  const layout = useLayout();
 
-  useOnPacket(PacketType.ISP_OBH, onObjectHit(powerUps));
+  useOnPacket(PacketType.ISP_OBH, (packet: IS_OBH, inSim: InSim) => {
+    const triggerObjects: ObjectIndex[] = [
+      ObjectIndex.AXO_CONE_GREEN,
+      ObjectIndex.AXO_CONE_RED,
+      ObjectIndex.AXO_CONE_BLUE,
+      ObjectIndex.AXO_CONE_YELLOW,
+    ];
 
-  function onObjectHit(powerUps: PowerUp[]) {
-    return (packet: IS_OBH, inSim: InSim) => {
-      log("Object hit");
+    const isLayoutObject = Boolean(packet.OBHFlags & ObjectHitFlags.OBH_LAYOUT);
+    const isObjectOnSpot = Boolean(
+      packet.OBHFlags & ObjectHitFlags.OBH_ON_SPOT,
+    );
+    const isTriggerObject = triggerObjects.includes(packet.Index);
 
-      const RACE_CONTROL_MESSAGE_DURATION_MS = 4_000;
+    if (!isLayoutObject || !isTriggerObject || !isObjectOnSpot) {
+      log("Not a valid object hit");
+      console.log({ isLayoutObject, isTriggerObject, isObjectOnSpot });
+      return;
+    }
 
-      const triggerObjects: ObjectIndex[] = [
-        ObjectIndex.AXO_CONE_GREEN,
-        ObjectIndex.AXO_CONE_RED,
-        ObjectIndex.AXO_CONE_BLUE,
-        ObjectIndex.AXO_CONE_YELLOW,
-      ];
+    const randomPowerUpId = Math.floor(Math.random() * powerUps.length);
+    const randomPowerUp = powerUps[randomPowerUpId];
+    randomPowerUp.execute({
+      packet,
+      inSim,
+      connections,
+      players,
+      layout,
+    });
 
-      const isLayoutObject = Boolean(
-        packet.OBHFlags & ObjectHitFlags.OBH_LAYOUT,
-      );
-      const isObjectOnSpot = Boolean(
-        packet.OBHFlags & ObjectHitFlags.OBH_ON_SPOT,
-      );
-      const isTriggerObject = triggerObjects.includes(packet.Index);
+    const targetPlayer = players.get(packet.PLID);
 
-      if (!isLayoutObject || !isTriggerObject || !isObjectOnSpot) {
-        return;
-      }
+    if (!targetPlayer) {
+      log(`Error: No player found for PLID ${packet.PLID}`);
+      return;
+    }
 
-      const randomPowerUpId = Math.floor(Math.random() * powerUps.length);
-      const randomPowerUp = powerUps[randomPowerUpId];
-      randomPowerUp.execute(packet, inSim, connections);
+    log(`Object hit by ${targetPlayer.PName} (PLID ${packet.PLID})`);
 
-      const targetPlayer = players.get(packet.PLID);
-
-      if (!targetPlayer) {
-        log(`Error: No player found for PLID ${packet.PLID}`);
-        return;
-      }
-
-      const targetConnection = connections.get(targetPlayer.UCID);
-
-      if (!targetConnection) {
-        log(`Error: No connection found for PLID ${packet.PLID}`);
-        return;
-      }
-
-      sendRaceControlMessage(
-        targetConnection,
-        randomPowerUp.name,
-        RACE_CONTROL_MESSAGE_DURATION_MS,
-      );
-    };
-  }
+    sendRaceControlMessageToConnection(
+      targetPlayer.UCID,
+      randomPowerUp.name,
+      4_000,
+    );
+  });
 }

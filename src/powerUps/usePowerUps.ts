@@ -10,29 +10,58 @@ import {
 
 import { useLayout } from "../layout";
 import { log } from "../log";
-import { fakePowerUp, hayBale, reset } from "./powerUps";
-import type { PowerUp } from "./types";
-
-const powerUps: PowerUp[] = [
-  {
-    name: "^3Hay Bale!",
-    execute: hayBale,
-  },
-  {
-    name: "^3Reset!",
-    execute: reset,
-  },
-  {
-    name: "^3Fake PowerUp!",
-    execute: fakePowerUp,
-  },
-];
+import { useMultiCarInfoRef } from "../multiCarInfo/useMultiCarInfoRef";
+import { usePowerUpsContext } from "./hooks";
 
 export function usePowerUps() {
+  const powerUpsContext = usePowerUpsContext();
   const connections = useConnections();
   const players = usePlayers();
   const { sendRaceControlMessageToConnection } = useRaceControlMessage();
   const layout = useLayout();
+  const multiCarInfoRef = useMultiCarInfoRef();
+
+  const { powerUps, powerUpQueueByPlayer } = powerUpsContext;
+
+  useOnPacket(PacketType.ISP_III, (packet, inSim) => {
+    if (packet.Msg !== "powerup") {
+      return;
+    }
+
+    log(`Player ${packet.PLID} requested activating a power-up`);
+
+    const [firstPowerUp] = powerUpQueueByPlayer[packet.PLID] ?? [];
+    const player = players.get(packet.PLID);
+
+    if (!player) {
+      log(
+        `Player ${packet.PLID} failed to activate a power-up - player not found`,
+      );
+      return;
+    }
+
+    if (!firstPowerUp) {
+      log(
+        `Player ${packet.PLID} failed to activate a power-up - no power-ups in queue`,
+      );
+      return;
+    }
+
+    log(`Player ${packet.PLID} activated a power-up: ${firstPowerUp.queueId}`);
+
+    firstPowerUp.execute({
+      multiCarInfoRef,
+      inSim,
+      player,
+      connections,
+      players,
+      layout,
+      powerUpsContext,
+      timeout: firstPowerUp.timeout,
+    });
+
+    powerUpsContext.removePowerUp(packet.PLID, firstPowerUp);
+  });
 
   useOnPacket(PacketType.ISP_OBH, (packet: IS_OBH, inSim: InSim) => {
     const triggerObjects: ObjectIndex[] = [
@@ -49,20 +78,10 @@ export function usePowerUps() {
     const isTriggerObject = triggerObjects.includes(packet.Index);
 
     if (!isLayoutObject || !isTriggerObject || !isObjectOnSpot) {
-      log("Not a valid object hit");
+      log("Not a valid power-up object hit");
       console.log({ isLayoutObject, isTriggerObject, isObjectOnSpot });
       return;
     }
-
-    const randomPowerUpId = Math.floor(Math.random() * powerUps.length);
-    const randomPowerUp = powerUps[randomPowerUpId];
-    randomPowerUp.execute({
-      packet,
-      inSim,
-      connections,
-      players,
-      layout,
-    });
 
     const targetPlayer = players.get(packet.PLID);
 
@@ -71,7 +90,31 @@ export function usePowerUps() {
       return;
     }
 
-    log(`Object hit by ${targetPlayer.PName} (PLID ${packet.PLID})`);
+    log(`Power-up object hit by ${targetPlayer.PName} (PLID ${packet.PLID})`);
+
+    const powerUpValues = Object.values(powerUps);
+    const randomPowerUpIndex = Math.floor(Math.random() * powerUpValues.length);
+    const randomPowerUp = powerUpValues[randomPowerUpIndex];
+
+    if (!randomPowerUp.isInstant) {
+      log(`Power-up ${randomPowerUp.id} is not instant, adding to queue`);
+      powerUpsContext.addPowerUp(targetPlayer.PLID, randomPowerUp);
+      return;
+    }
+
+    log(
+      `Executing instant power-up for player ${targetPlayer.PLID}: ${randomPowerUp.id}`,
+    );
+    randomPowerUp.execute({
+      objectHitPacket: packet,
+      inSim,
+      player: targetPlayer,
+      connections,
+      players,
+      layout,
+      powerUpsContext,
+      timeout: randomPowerUp.timeout,
+    });
 
     sendRaceControlMessageToConnection(
       targetPlayer.UCID,

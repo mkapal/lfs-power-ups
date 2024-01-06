@@ -8,3 +8,6 @@ export type Point3D = {
   y: number;
   z: number;
 };
+
+/** PLID (0-255) */
+export type PlayerId = number;

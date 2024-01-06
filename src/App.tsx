@@ -1,8 +1,13 @@
 import { IS_MTC, MessageSound } from "node-insim/packets";
-import { Button, useOnConnect } from "react-node-insim";
+import {
+  Button,
+  ConnectionsProvider,
+  PlayersProvider,
+  useOnConnect,
+} from "react-node-insim";
 
 import { log } from "./log";
-import { usePowerUps } from "./powerUps";
+import { PowerUps, powerUps, PowerUpsProvider } from "./powerUps";
 
 const appName = "LFS PowerUps v0.0.1";
 
@@ -18,21 +23,24 @@ export function App() {
     );
   });
 
-  usePowerUps();
-
   return (
-    <>
-      <Button
-        top={195}
-        left={1}
-        width={20}
-        height={3}
-        UCID={255}
-        color="selected"
-        align="left"
-      >
-        {appName}
-      </Button>
-    </>
+    <ConnectionsProvider>
+      <PlayersProvider>
+        <Button
+          top={195}
+          left={1}
+          width={20}
+          height={3}
+          UCID={255}
+          color="selected"
+          align="left"
+        >
+          {appName}
+        </Button>
+        <PowerUpsProvider powerUps={powerUps}>
+          <PowerUps />
+        </PowerUpsProvider>
+      </PlayersProvider>
+    </ConnectionsProvider>
   );
 }

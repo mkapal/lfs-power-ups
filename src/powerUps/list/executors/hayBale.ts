@@ -1,16 +1,26 @@
 import { ObjectIndex, ObjectInfo } from "node-insim/packets";
 
-import { log } from "../../log";
-import { compCarAngleToRadians } from "../../utils";
-import type { ManualPowerUpExecutor } from "../types";
+import { log } from "../../../log";
+import { compCarAngleToRadians } from "../../../utils";
+import type {
+  ManualPowerUpExecutorContext,
+  PowerUpDefinition,
+} from "../../types";
 
-export const hayBale: ManualPowerUpExecutor = ({
+export const hayBale: PowerUpDefinition = {
+  name: "^3Hay Bale",
+  timeout: 5_000,
+  isInstant: false,
+  execute: hayBaleExecutor,
+};
+
+function hayBaleExecutor({
   multiCarInfoRef,
   layout,
   timeout,
   player,
-}) => {
-  const compCar = multiCarInfoRef.current[player.PLID];
+}: ManualPowerUpExecutorContext) {
+  const compCar = multiCarInfoRef[player.PLID];
 
   if (!compCar) {
     log(
@@ -38,4 +48,4 @@ export const hayBale: ManualPowerUpExecutor = ({
   });
 
   layout.spawnObjectForTime(baleObject, timeout ?? 0);
-};
+}

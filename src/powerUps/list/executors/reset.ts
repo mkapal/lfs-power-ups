@@ -1,8 +1,21 @@
 import { IS_JRR, JRRAction, ObjectInfo } from "node-insim/packets";
 
-import type { InstantPowerUpExecutor } from "../types";
+import type {
+  InstantPowerUpExecutorContext,
+  PowerUpDefinition,
+} from "../../types";
 
-export const reset: InstantPowerUpExecutor = ({ objectHitPacket, inSim }) => {
+export const reset: PowerUpDefinition = {
+  name: "^0Reset",
+  timeout: 4_000,
+  isInstant: true,
+  execute: resetExecutor,
+};
+
+function resetExecutor({
+  objectHitPacket,
+  inSim,
+}: InstantPowerUpExecutorContext) {
   if (!objectHitPacket) {
     return;
   }
@@ -21,4 +34,4 @@ export const reset: InstantPowerUpExecutor = ({ objectHitPacket, inSim }) => {
       }),
     }),
   );
-};
+}

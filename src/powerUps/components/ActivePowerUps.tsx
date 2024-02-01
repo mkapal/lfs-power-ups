@@ -1,11 +1,11 @@
 import { Fragment } from "react";
 import { Button, usePlayers, VStack } from "react-node-insim";
 
-import { usePowerUpsContext } from "../hooks";
+import { usePowerUpQueue } from "../queue/PowerUpQueueContext";
 
 export function ActivePowerUps() {
   const players = usePlayers();
-  const { powerUpQueueByPlayer } = usePowerUpsContext();
+  const { powerUpQueueByPlayer } = usePowerUpQueue();
 
   const width = 30;
   const height = 5;

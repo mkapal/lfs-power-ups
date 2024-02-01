@@ -1,12 +1,22 @@
 import { IS_PLH, PlayerHCap, PlayerHCapFlags } from "node-insim/packets";
 
-import type { ManualPowerUpExecutor } from "../types";
+import type {
+  ManualPowerUpExecutorContext,
+  PowerUpDefinition,
+} from "../../types";
 
-export const powerRestrictor: ManualPowerUpExecutor = ({
+export const powerRestrictor: PowerUpDefinition = {
+  name: "^0Low Power",
+  timeout: 5_000,
+  isInstant: true,
+  execute: powerRestrictorExecutor,
+};
+
+function powerRestrictorExecutor({
   inSim,
   player,
   timeout,
-}) => {
+}: ManualPowerUpExecutorContext) {
   inSim.send(
     new IS_PLH({
       NumP: 1,
@@ -37,4 +47,4 @@ export const powerRestrictor: ManualPowerUpExecutor = ({
       );
     }, timeout);
   }
-};
+}

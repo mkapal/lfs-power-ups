@@ -1,19 +1,18 @@
 import { type CompCar, PacketType } from "node-insim/packets";
-import { useRef } from "react";
 import { useOnPacket } from "react-node-insim";
 
 import type { PlayerId } from "../types";
 
 type MultiCarInfo = Record<PlayerId, CompCar>;
 
-export function useMultiCarInfoRef() {
-  const multiCarInfoRef = useRef<MultiCarInfo>({});
+const multiCarInfo: MultiCarInfo = {};
 
+export function useMultiCarInfoRef() {
   useOnPacket(PacketType.ISP_MCI, (packet) => {
     packet.Info.forEach((compCar) => {
-      multiCarInfoRef.current[compCar.PLID] = compCar;
+      multiCarInfo[compCar.PLID] = compCar;
     });
   });
 
-  return multiCarInfoRef;
+  return multiCarInfo;
 }

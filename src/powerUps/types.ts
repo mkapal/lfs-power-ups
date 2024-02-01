@@ -2,19 +2,11 @@ import type { InSim } from "node-insim";
 import type { IS_OBH } from "node-insim/packets";
 import type { Player, useConnections, usePlayers } from "react-node-insim";
 
-import type { useLayout } from "../layout";
+import type { useLayout } from "../layout/useLayout";
 import type { useMultiCarInfoRef } from "../multiCarInfo/useMultiCarInfoRef";
-import type { PowerUpsContextType } from "./context";
+import type { PowerUpQueueContextType } from "./queue/PowerUpQueueContext";
 
 export type PowerUpId = string;
-
-export type ManualPowerUpExecutor = (
-  context: ManualPowerUpExecutorContext,
-) => void;
-
-export type InstantPowerUpExecutor = (
-  context: InstantPowerUpExecutorContext,
-) => void;
 
 type BasePowerUpExecutorContext = {
   inSim: InSim;
@@ -22,15 +14,16 @@ type BasePowerUpExecutorContext = {
   connections: ReturnType<typeof useConnections>;
   players: ReturnType<typeof usePlayers>;
   layout: ReturnType<typeof useLayout>;
-  powerUpsContext: PowerUpsContextType;
+  powerUps: PowerUp[];
+  powerUpQueue: PowerUpQueueContextType;
   timeout?: number;
 };
 
-type ManualPowerUpExecutorContext = BasePowerUpExecutorContext & {
+export type ManualPowerUpExecutorContext = BasePowerUpExecutorContext & {
   multiCarInfoRef: ReturnType<typeof useMultiCarInfoRef>;
 };
 
-type InstantPowerUpExecutorContext = BasePowerUpExecutorContext & {
+export type InstantPowerUpExecutorContext = BasePowerUpExecutorContext & {
   objectHitPacket: IS_OBH;
 };
 
@@ -42,12 +35,14 @@ type PowerUpBaseProps = {
 
 export type InstantPowerUp = PowerUpBaseProps & {
   isInstant: true;
-  execute: InstantPowerUpExecutor;
+  execute: (context: InstantPowerUpExecutorContext) => void;
 };
 
 export type ManualPowerUp = PowerUpBaseProps & {
   isInstant?: false;
-  execute: ManualPowerUpExecutor;
+  execute: (context: ManualPowerUpExecutorContext) => void;
 };
 
 export type PowerUp = InstantPowerUp | ManualPowerUp;
+
+export type PowerUpDefinition = Omit<PowerUp, "id">;

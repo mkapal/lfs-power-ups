@@ -7,18 +7,20 @@ import {
 } from "react-node-insim";
 
 import { log } from "./log";
-import { PowerUps, powerUps, PowerUpsProvider } from "./powerUps";
+import { PowerUps } from "./powerUps";
 
-const appName = "LFS PowerUps v0.0.1";
+type AppProps = {
+  name: string;
+};
 
-export function App() {
+export function App({ name }: AppProps) {
   useOnConnect((packet, inSim) => {
     log(`Connected to LFS ${packet.Product} ${packet.Version}`);
     inSim.send(
       new IS_MTC({
         UCID: 255,
         Sound: MessageSound.SND_SYSMESSAGE,
-        Text: `${appName} connected`,
+        Text: `${name} connected`,
       }),
     );
   });
@@ -35,11 +37,9 @@ export function App() {
           color="selected"
           align="left"
         >
-          {appName}
+          {name}
         </Button>
-        <PowerUpsProvider powerUps={powerUps}>
-          <PowerUps />
-        </PowerUpsProvider>
+        <PowerUps />
       </PlayersProvider>
     </ConnectionsProvider>
   );

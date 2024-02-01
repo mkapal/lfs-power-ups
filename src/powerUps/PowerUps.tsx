@@ -1,13 +1,13 @@
-import { ActivePowerUps, AvailablePowerUps } from "./components";
-import { usePowerUps } from "./hooks";
+import { PowerUpListProvider } from "./list/PowerUpListContext";
+import { PowerUpsModule } from "./PowerUpsModule";
+import { PowerUpQueueProvider } from "./queue/PowerUpQueueContext";
 
 export function PowerUps() {
-  usePowerUps();
-
   return (
-    <>
-      <AvailablePowerUps />
-      <ActivePowerUps />
-    </>
+    <PowerUpListProvider>
+      <PowerUpQueueProvider>
+        <PowerUpsModule />
+      </PowerUpQueueProvider>
+    </PowerUpListProvider>
   );
 }

@@ -1,9 +1,9 @@
 import { Button, VStack } from "react-node-insim";
 
-import { usePowerUpsContext } from "../hooks";
+import { usePowerUpList } from "../list/PowerUpListContext";
 
 export function AvailablePowerUps() {
-  const { powerUps } = usePowerUpsContext();
+  const { powerUps } = usePowerUpList();
 
   return (
     <>

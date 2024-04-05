@@ -11,8 +11,8 @@ type Queue = Record<PlayerId, QueuedPowerUp[]>;
 
 export type PowerUpQueueContextType = {
   powerUpQueueByPlayer: Queue;
-  addPowerUp: (playerId: PlayerId, powerUp: ManualPowerUp) => void;
-  removePowerUp: (playerId: PlayerId, powerUp: QueuedPowerUp) => void;
+  addPowerUpToQueue: (playerId: PlayerId, powerUp: ManualPowerUp) => void;
+  removePowerUpFromQueue: (playerId: PlayerId, powerUp: QueuedPowerUp) => void;
 };
 
 const PowerUpQueueContext = createContext<PowerUpQueueContextType | null>(null);
@@ -28,7 +28,7 @@ export function PowerUpQueueProvider({ children }: PowerUpsProviderProps) {
     <PowerUpQueueContext.Provider
       value={{
         powerUpQueueByPlayer,
-        addPowerUp: (playerId, powerUp) => {
+        addPowerUpToQueue: (playerId, powerUp) => {
           const queuedPowerUpId = generatePowerUpId(powerUp);
 
           log(`Adding power-up ${queuedPowerUpId} from player ${playerId}`);
@@ -45,7 +45,7 @@ export function PowerUpQueueProvider({ children }: PowerUpsProviderProps) {
             ],
           }));
         },
-        removePowerUp: (playerId, powerUpToRemove) => {
+        removePowerUpFromQueue: (playerId, powerUpToRemove) => {
           log(
             `Removing power-up ${powerUpToRemove.queueId} from player ${playerId}`,
           );
@@ -70,7 +70,7 @@ export function usePowerUpQueue() {
 
   if (powerUpQueueContext === null) {
     throw new Error(
-      "usePowerUpQueue hook must be called within <PowerUpQueueContext.Provider>",
+      "usePowerUpQueue hook must be called within <PowerUpQueueProvider>",
     );
   }
 

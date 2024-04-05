@@ -11,3 +11,7 @@ export type Point3D = {
 
 /** PLID (0-255) */
 export type PlayerId = number;
+
+export type WithRequired<T, K extends keyof T> = T & {
+  [P in K]-?: T[P];
+};

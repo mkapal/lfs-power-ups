@@ -1,23 +1,14 @@
 import { PacketType } from "node-insim/packets";
-import { useConnections, useOnPacket, usePlayers } from "react-node-insim";
+import { useOnPacket, usePlayers } from "react-node-insim";
 
-import { useLayout } from "../../layout/useLayout";
 import { log } from "../../log";
-import { useMultiCarInfoRef } from "../../multiCarInfo/useMultiCarInfoRef";
-import { usePowerUpList } from "../list/PowerUpListContext";
 import { usePowerUpQueue } from "../queue/PowerUpQueueContext";
 
 export function useManualPowerUps() {
-  const connections = useConnections();
   const players = usePlayers();
-  const multiCarInfoRef = useMultiCarInfoRef();
-  const layout = useLayout();
-  const { powerUps } = usePowerUpList();
-  const powerUpQueue = usePowerUpQueue();
+  const { powerUpQueueByPlayer, removePowerUpFromQueue } = usePowerUpQueue();
 
-  const { powerUpQueueByPlayer, removePowerUp } = powerUpQueue;
-
-  useOnPacket(PacketType.ISP_III, (packet, inSim) => {
+  useOnPacket(PacketType.ISP_III, (packet) => {
     if (packet.Msg !== "powerup") {
       return;
     }
@@ -44,17 +35,9 @@ export function useManualPowerUps() {
     log(`Player ${packet.PLID} activated a power-up: ${firstPowerUp.queueId}`);
 
     firstPowerUp.execute({
-      multiCarInfoRef,
-      inSim,
       player,
-      connections,
-      players,
-      layout,
-      powerUps,
-      powerUpQueue,
-      timeout: firstPowerUp.timeout,
     });
 
-    removePowerUp(packet.PLID, firstPowerUp);
+    removePowerUpFromQueue(packet.PLID, firstPowerUp);
   });
 }

@@ -1,37 +1,30 @@
 import { IS_PLH, PlayerHCap, PlayerHCapFlags } from "node-insim/packets";
+import { useInSim } from "react-node-insim";
 
-import type {
-  ManualPowerUpExecutorContext,
-  PowerUpDefinition,
-} from "../../types";
+import type { InstantPowerUpHook } from "../../types";
 
-export const powerRestrictor: PowerUpDefinition = {
-  name: "^0Low Power",
-  timeout: 5_000,
-  isInstant: true,
-  execute: powerRestrictorExecutor,
-};
+export const usePowerRestrictor: InstantPowerUpHook = () => {
+  const inSim = useInSim();
 
-function powerRestrictorExecutor({
-  inSim,
-  player,
-  timeout,
-}: ManualPowerUpExecutorContext) {
-  inSim.send(
-    new IS_PLH({
-      NumP: 1,
-      HCaps: [
-        new PlayerHCap({
-          PLID: player.PLID,
-          Flags: PlayerHCapFlags.INTAKE_RESTRICTION | PlayerHCapFlags.SILENT,
-          H_TRes: 50,
+  return {
+    name: "^0Low Power",
+    timeout: 20_000,
+    isInstant: true,
+    execute: ({ player }) =>
+      inSim.send(
+        new IS_PLH({
+          NumP: 1,
+          HCaps: [
+            new PlayerHCap({
+              PLID: player.PLID,
+              Flags:
+                PlayerHCapFlags.INTAKE_RESTRICTION | PlayerHCapFlags.SILENT,
+              H_TRes: 50,
+            }),
+          ],
         }),
-      ],
-    }),
-  );
-
-  if (timeout) {
-    setTimeout(() => {
+      ),
+    cleanup: ({ player }) => {
       inSim.send(
         new IS_PLH({
           NumP: 1,
@@ -45,6 +38,6 @@ function powerRestrictorExecutor({
           ],
         }),
       );
-    }, timeout);
-  }
-}
+    },
+  };
+};

@@ -1,8 +1,12 @@
-import "./env.ts";
+import "./env";
 
 import { InSimFlags } from "node-insim/packets";
 import type { CreateRootOptions } from "react-node-insim";
-import { createRoot } from "react-node-insim";
+import {
+  ConnectionsProvider,
+  createRoot,
+  PlayersProvider,
+} from "react-node-insim";
 
 import { App } from "./App";
 
@@ -16,4 +20,10 @@ const rootOptions: CreateRootOptions = {
   interval: 100,
 };
 
-createRoot(rootOptions).render(<App name={appName} />);
+createRoot(rootOptions).render(
+  <ConnectionsProvider>
+    <PlayersProvider>
+      <App name={appName} />
+    </PlayersProvider>
+  </ConnectionsProvider>,
+);

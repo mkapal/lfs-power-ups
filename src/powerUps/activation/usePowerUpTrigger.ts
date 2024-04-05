@@ -1,4 +1,3 @@
-import type { InSim } from "node-insim";
 import {
   type IS_OBH,
   ObjectHitFlags,
@@ -6,28 +5,26 @@ import {
   PacketType,
 } from "node-insim/packets";
 import {
-  useConnections,
   useOnPacket,
   usePlayers,
   useRaceControlMessage,
 } from "react-node-insim";
 
-import { useLayout } from "../../layout/useLayout";
 import { log } from "../../log";
+import { useActivePowerUps } from "../activeList/ActivePowerUpsContext";
 import { usePowerUpList } from "../list/PowerUpListContext";
 import { usePowerUpQueue } from "../queue/PowerUpQueueContext";
 
-export function useInstantPowerUps() {
-  const connections = useConnections();
+export function usePowerUpTrigger() {
   const players = usePlayers();
   const { sendRaceControlMessageToConnection } = useRaceControlMessage();
-  const layout = useLayout();
   const { powerUps } = usePowerUpList();
   const powerUpQueue = usePowerUpQueue();
+  const activePowerUps = useActivePowerUps();
 
-  const { addPowerUp } = powerUpQueue;
+  const { addPowerUpToQueue } = powerUpQueue;
 
-  useOnPacket(PacketType.ISP_OBH, (packet: IS_OBH, inSim: InSim) => {
+  useOnPacket(PacketType.ISP_OBH, (packet: IS_OBH) => {
     const triggerObjects: ObjectIndex[] = [
       ObjectIndex.AXO_CONE_GREEN,
       ObjectIndex.AXO_CONE_RED,
@@ -61,9 +58,7 @@ export function useInstantPowerUps() {
 
     log(`Power-up object hit by ${targetPlayer.PName} (PLID ${packet.PLID})`);
 
-    const powerUpValues = Object.values(powerUps);
-    const randomPowerUpIndex = Math.floor(Math.random() * powerUpValues.length);
-    const randomPowerUp = powerUpValues[randomPowerUpIndex];
+    const randomPowerUp = powerUps[Math.floor(Math.random() * powerUps.length)];
 
     sendRaceControlMessageToConnection(
       targetPlayer.UCID,
@@ -73,23 +68,35 @@ export function useInstantPowerUps() {
 
     if (!randomPowerUp.isInstant) {
       log(`Power-up ${randomPowerUp.id} is not instant, adding to queue`);
-      addPowerUp(targetPlayer.PLID, randomPowerUp);
+      addPowerUpToQueue(targetPlayer.PLID, randomPowerUp);
       return;
     }
 
     log(
       `Executing instant power-up for player ${targetPlayer.PLID}: ${randomPowerUp.id}`,
     );
+
     randomPowerUp.execute({
-      objectHitPacket: packet,
-      inSim,
       player: targetPlayer,
-      connections,
-      players,
-      layout,
-      powerUps,
-      powerUpQueue,
-      timeout: randomPowerUp.timeout,
+      objectHitPacket: packet,
     });
+
+    if (!randomPowerUp.timeout) {
+      return;
+    }
+
+    activePowerUps.addPowerUp(
+      targetPlayer.PLID,
+      {
+        ...randomPowerUp,
+        timeout: randomPowerUp.timeout,
+      },
+      () => {
+        randomPowerUp.cleanup?.({
+          objectHitPacket: packet,
+          player: targetPlayer,
+        });
+      },
+    );
   });
 }

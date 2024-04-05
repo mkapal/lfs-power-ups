@@ -1,68 +1,49 @@
 import { Fragment } from "react";
-import { Button, usePlayers, VStack } from "react-node-insim";
+import { Button, HStack, usePlayers } from "react-node-insim";
 
-import { usePowerUpQueue } from "../queue/PowerUpQueueContext";
+import { useActivePowerUps } from "../activeList/ActivePowerUpsContext";
 
 export function ActivePowerUps() {
   const players = usePlayers();
-  const { powerUpQueueByPlayer } = usePowerUpQueue();
+  const { activePowerUpsByPlayer } = useActivePowerUps();
 
-  const width = 30;
   const height = 5;
-  const left = 75;
-  const top = 15;
+  const left = 150;
+  const top = 0;
 
   return (
     <>
       {players.map((player) => {
-        const activePowerUps = powerUpQueueByPlayer[player.PLID] ?? [];
+        const activePowerUps = activePowerUpsByPlayer[player.PLID] ?? [];
 
         return (
           <Fragment key={player.PLID}>
             <Button
               UCID={player.UCID}
-              left={left - 4}
-              top={top + height}
-              width={4}
-              height={height}
-              variant="dark"
-            >
-              ▶
-            </Button>
-            <Button
-              UCID={player.UCID}
-              left={left + width}
-              top={top + height}
-              width={4}
-              height={height}
-              variant="dark"
-            >
-              ◀
-            </Button>
-            <Button
-              UCID={player.UCID}
-              width={width}
+              width={20}
               height={height}
               left={left}
               top={top}
-              variant="light"
+              align="left"
+              color="title"
             >
-              Active power-ups: {player.PName}
+              Active power-ups
             </Button>
-            <VStack
-              UCID={player.UCID}
-              left={left}
-              top={top + height}
-              width={width}
-              height={height}
-              variant="dark"
-            >
-              {activePowerUps.map((powerUp) => (
-                <Button key={`${powerUp.id}-${powerUp.queueId}`}>
-                  {powerUp.name}
+            {activePowerUps.map((powerUp, index) => (
+              <HStack
+                key={`${powerUp.id}-${powerUp.queueId}`}
+                UCID={player.UCID}
+                top={top + height * (index + 1)}
+                left={left}
+                height={height}
+                variant="dark"
+              >
+                <Button width={14}>{powerUp.name}</Button>
+                <Button width={4}>
+                  {(powerUp.timeRemainingMs / 1000).toFixed(0)}
                 </Button>
-              ))}
-            </VStack>
+              </HStack>
+            ))}
           </Fragment>
         );
       })}

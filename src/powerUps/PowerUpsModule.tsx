@@ -1,14 +1,17 @@
-import { useInstantPowerUps } from "./activation/useInstantPowerUps";
 import { useManualPowerUps } from "./activation/useManualPowerUps";
-import { ActivePowerUps, AvailablePowerUps } from "./components";
+import { usePowerUpTrigger } from "./activation/usePowerUpTrigger";
+import { ActivePowerUps } from "./components/ActivePowerUps";
+import { AllPowerUps } from "./components/AllPowerUps";
+import { PowerUpQueue } from "./components/PowerUpQueue";
 
 export function PowerUpsModule() {
   useManualPowerUps();
-  useInstantPowerUps();
+  usePowerUpTrigger();
 
   return (
     <>
-      <AvailablePowerUps />
+      <AllPowerUps />
+      <PowerUpQueue />
       <ActivePowerUps />
     </>
   );

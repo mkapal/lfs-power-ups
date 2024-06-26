@@ -1,6 +1,7 @@
 import { IS_PLH, PlayerHCap, PlayerHCapFlags } from "node-insim/packets";
 import { useInSim } from "react-node-insim";
 
+import { log } from "../../../log";
 import { usePowerUpQueue } from "../../queue/PowerUpQueueContext";
 import type { InstantPowerUpHook } from "../../types";
 
@@ -33,6 +34,9 @@ export const usePowerRestrictor: InstantPowerUpHook = () => {
       );
 
       if (hasOtherActiveRestrictors) {
+        log(
+          `Player ${player.PName}^8 already has an active power restrictor - do not cleanup`,
+        );
         return;
       }
 

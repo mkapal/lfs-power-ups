@@ -1934,14 +1934,20 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-react-node-insim@*:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/react-node-insim/-/react-node-insim-0.0.2.tgz#cde37ac8db36d883b4e0bfa8d3c4d0ac0de9d735"
-  integrity sha512-UU5t4L8Y0qEnmh9AgGxAh/UyI/BVTQ1BJxYrgDbDa8vazfzdJgOyMj5WnozrscKaP/sPF8g4RIfudGJrYt/0SQ==
+ramda@^0.30.1:
+  version "0.30.1"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.30.1.tgz#7108ac95673062b060025052cd5143ae8fc605bf"
+  integrity sha512-tEF5I22zJnuclswcZMc8bDIrwRHRzf+NqVEmqg50ShAZMP7MWeR/RGDthfM/p+BlqvF2fXAzpn8i+SJcYD3alw==
+
+react-node-insim@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/react-node-insim/-/react-node-insim-0.0.6.tgz#98fc4d5fd18712d2292d41c153bdeeb29e11869d"
+  integrity sha512-AQZzsGF+m31ZWqm+RiEgDHk+Mgh00Tvw8E+1QPJ315FKcAVmQW8HtvfXTkFyJLKC3AvO5xPg6pJg+hi8lhR2fA==
   dependencies:
     "@types/react-reconciler" "^0.28.2"
     "@welefen/grid-layout" "^1.1.0"
     debug "^4.3.4"
+    ramda "^0.30.1"
     react-reconciler "0.29.0"
     yoga-layout-prebuilt "^1.10.0"
 

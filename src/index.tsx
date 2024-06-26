@@ -18,6 +18,7 @@ const rootOptions: CreateRootOptions = {
   adminPassword: process.env.ADMIN,
   flags: InSimFlags.ISF_OBH | InSimFlags.ISF_HLV | InSimFlags.ISF_MCI,
   interval: 100,
+  buttonClickIDStart: parseInt(process.env.BUTTON_CLICK_ID_START ?? "0", 10),
 };
 
 createRoot(rootOptions).render(

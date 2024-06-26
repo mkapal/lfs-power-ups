@@ -20,7 +20,7 @@ export function AllPowerUps() {
         align="left"
         color="title"
       >
-        All power-ups
+        All available power-ups
       </Button>
       <HStack
         UCID={255}

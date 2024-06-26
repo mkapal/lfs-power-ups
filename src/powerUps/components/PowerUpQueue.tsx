@@ -19,30 +19,43 @@ export function PowerUpQueue() {
 
         return (
           <Fragment key={player.PLID}>
-            <Button
-              UCID={player.UCID}
-              left={left - 4}
-              top={top}
-              width={4}
-              height={height}
-              variant="dark"
-            >
-              ▶
-            </Button>
-            <Button
-              UCID={player.UCID}
-              left={left + width}
-              top={top}
-              width={4}
-              height={height}
-              variant="dark"
-            >
-              ◀
-            </Button>
+            {queuedPowerUps.length > 0 && (
+              <>
+                <Button
+                  UCID={player.UCID}
+                  top={top}
+                  left={left}
+                  width={width}
+                  height={4}
+                >
+                  Type ^7/i powerup^8 to activate
+                </Button>
+                <Button
+                  UCID={player.UCID}
+                  left={left - 4}
+                  top={top + 4}
+                  width={4}
+                  height={height}
+                  variant="dark"
+                >
+                  ▶
+                </Button>
+                <Button
+                  UCID={player.UCID}
+                  left={left + width}
+                  top={top + 4}
+                  width={4}
+                  height={height}
+                  variant="dark"
+                >
+                  ◀
+                </Button>
+              </>
+            )}
             <VStack
               UCID={player.UCID}
               left={left}
-              top={top}
+              top={top + 4}
               width={width}
               height={height}
               variant="dark"

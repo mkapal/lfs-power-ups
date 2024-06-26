@@ -18,17 +18,19 @@ export function ActivePowerUps() {
 
         return (
           <Fragment key={player.PLID}>
-            <Button
-              UCID={player.UCID}
-              width={20}
-              height={height}
-              left={left}
-              top={top}
-              align="left"
-              color="title"
-            >
-              Active power-ups
-            </Button>
+            {activePowerUps.length > 0 && (
+              <Button
+                UCID={player.UCID}
+                width={20}
+                height={height}
+                left={left}
+                top={top}
+                align="left"
+                color="title"
+              >
+                Active power-ups
+              </Button>
+            )}
             {activePowerUps.map((powerUp, index) => (
               <HStack
                 key={`${powerUp.id}-${powerUp.queueId}`}

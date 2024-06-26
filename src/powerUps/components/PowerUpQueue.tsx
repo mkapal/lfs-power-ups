@@ -24,11 +24,11 @@ export function PowerUpQueue() {
                 <Button
                   UCID={player.UCID}
                   top={top}
-                  left={left}
-                  width={width}
+                  left={left - 4}
+                  width={width + 8}
                   height={4}
                 >
-                  Type ^7/i powerup^8 to activate
+                  Type ^7/i powerup^9 to activate
                 </Button>
                 <Button
                   UCID={player.UCID}

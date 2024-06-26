@@ -1,10 +1,12 @@
 import { IS_PLH, PlayerHCap, PlayerHCapFlags } from "node-insim/packets";
 import { useInSim } from "react-node-insim";
 
+import { usePowerUpQueue } from "../../queue/PowerUpQueueContext";
 import type { InstantPowerUpHook } from "../../types";
 
 export const usePowerRestrictor: InstantPowerUpHook = () => {
   const inSim = useInSim();
+  const { powerUpQueueByPlayer } = usePowerUpQueue();
 
   return {
     name: "^0Low Power",
@@ -25,6 +27,15 @@ export const usePowerRestrictor: InstantPowerUpHook = () => {
         }),
       ),
     cleanup: ({ player }) => {
+      const playerPowerUps = powerUpQueueByPlayer[player.PLID] ?? [];
+      const hasOtherActiveRestrictors = playerPowerUps.some(
+        (powerUp) => powerUp.id === "powerRestrictor",
+      );
+
+      if (hasOtherActiveRestrictors) {
+        return;
+      }
+
       inSim.send(
         new IS_PLH({
           NumP: 1,

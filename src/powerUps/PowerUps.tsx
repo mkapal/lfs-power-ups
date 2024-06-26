@@ -5,12 +5,12 @@ import { PowerUpQueueProvider } from "./queue/PowerUpQueueContext";
 
 export function PowerUps() {
   return (
-    <PowerUpListProvider>
-      <PowerUpQueueProvider>
+    <PowerUpQueueProvider>
+      <PowerUpListProvider>
         <ActivePowerUpsProvider>
           <PowerUpsModule />
         </ActivePowerUpsProvider>
-      </PowerUpQueueProvider>
-    </PowerUpListProvider>
+      </PowerUpListProvider>
+    </PowerUpQueueProvider>
   );
 }

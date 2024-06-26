@@ -13,7 +13,7 @@ export function AllPowerUps() {
     <>
       <Button
         UCID={255}
-        width={20}
+        width={30}
         height={height}
         left={left}
         top={top}

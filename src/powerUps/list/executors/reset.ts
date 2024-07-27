@@ -7,7 +7,7 @@ export const useReset: InstantPowerUpHook = () => {
   const inSim = useInSim();
 
   return {
-    name: "^0Reset",
+    name: "^1Reset",
     isInstant: true,
     execute: ({ objectHitPacket }) => {
       if (!objectHitPacket) {

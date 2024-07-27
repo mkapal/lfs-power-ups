@@ -31,8 +31,7 @@ export function PowerUpQueueProvider({ children }: PowerUpsProviderProps) {
         addPowerUpToQueue: (playerId, powerUp) => {
           const queuedPowerUpId = generatePowerUpId(powerUp);
 
-          log(`Adding power-up ${queuedPowerUpId} from player ${playerId}`);
-          log(`Current queue: ${JSON.stringify(powerUpQueueByPlayer)}`);
+          log(`Adding power-up ${queuedPowerUpId} for player ${playerId}`);
 
           setPowerUpQueueByPlayer((prevState) => ({
             ...prevState,
@@ -49,7 +48,6 @@ export function PowerUpQueueProvider({ children }: PowerUpsProviderProps) {
           log(
             `Removing power-up ${powerUpToRemove.queueId} from player ${playerId}`,
           );
-          log(`Current queue: ${JSON.stringify(powerUpQueueByPlayer)}`);
 
           setPowerUpQueueByPlayer((prevState) => ({
             ...prevState,

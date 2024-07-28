@@ -13,7 +13,10 @@
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "ts-node": {
     "esm": true

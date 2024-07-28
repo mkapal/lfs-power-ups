@@ -32,10 +32,6 @@ export type ManualPowerUpDefinition = {
   isInstant: false;
 } & PowerUpDefinitionBase<ManualPowerUpExecutorContext>;
 
-export type PowerUpDefinition =
-  | InstantPowerUpDefinition
-  | ManualPowerUpDefinition;
-
 export type ManualPowerUp = ManualPowerUpDefinition & {
   id: PowerUpId;
 };

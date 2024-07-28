@@ -1,8 +1,13 @@
 import { IS_MTC, MessageSound } from "node-insim/packets";
-import { Button, useOnConnect } from "react-node-insim";
+import { useOnConnect } from "react-node-insim";
 
+import { GlobalButton } from "@/components/GlobalButton";
+import { GlobalProviders } from "@/GlobalProviders";
+import { PowerUpList } from "@/modules/powerUps/list/PowerUpList";
+import { PowerUpsForConnection } from "@/modules/powerUps/PowerUpsForConnection";
+
+import { ButtonsByConnection } from "./components/ButtonsByConnection";
 import { log } from "./log";
-import { PowerUps } from "./powerUps";
 
 type AppProps = {
   name: string;
@@ -21,19 +26,21 @@ export function App({ name }: AppProps) {
   });
 
   return (
-    <>
-      <PowerUps />
-      <Button
+    <GlobalProviders>
+      <ButtonsByConnection>
+        <PowerUpsForConnection />
+      </ButtonsByConnection>
+      <PowerUpList />
+      <GlobalButton
         top={195}
         left={1}
         width={20}
         height={3}
-        UCID={255}
         color="selected"
         align="left"
       >
         {name}
-      </Button>
-    </>
+      </GlobalButton>
+    </GlobalProviders>
   );
 }

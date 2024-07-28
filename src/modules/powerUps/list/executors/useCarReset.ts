@@ -1,13 +1,13 @@
 import { IS_JRR, JRRAction, ObjectInfo } from "node-insim/packets";
 import { useInSim } from "react-node-insim";
 
-import type { InstantPowerUpHook } from "../../types";
+import type { InstantPowerUpHook } from "@/modules/powerUps/types";
 
-export const useReset: InstantPowerUpHook = () => {
+export const useCarReset: InstantPowerUpHook = () => {
   const inSim = useInSim();
 
   return {
-    name: "^1Reset",
+    name: "^1Car Reset",
     isInstant: true,
     execute: ({ objectHitPacket }) => {
       if (!objectHitPacket) {

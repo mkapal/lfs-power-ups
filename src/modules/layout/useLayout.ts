@@ -1,7 +1,7 @@
 import { IS_AXM, type ObjectInfo, PMOAction } from "node-insim/packets";
 import { useInSim } from "react-node-insim";
 
-import { log } from "../log";
+import { log } from "@/log";
 
 export function useLayout() {
   const inSim = useInSim();

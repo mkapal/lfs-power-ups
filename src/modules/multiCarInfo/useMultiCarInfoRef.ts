@@ -1,7 +1,7 @@
 import { type CompCar, PacketType } from "node-insim/packets";
 import { useOnPacket } from "react-node-insim";
 
-import type { PlayerId } from "../types";
+import type { PlayerId } from "@/types";
 
 type MultiCarInfo = Record<PlayerId, CompCar>;
 

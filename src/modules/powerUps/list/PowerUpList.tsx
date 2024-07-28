@@ -1,8 +1,9 @@
 import { Button, HStack } from "react-node-insim";
 
-import { usePowerUpList } from "../list/PowerUpListContext";
+import { GlobalButton } from "@/components/GlobalButton";
+import { usePowerUpList } from "@/modules/powerUps/list/context/usePowerUpList";
 
-export function AllPowerUps() {
+export function PowerUpList() {
   const { powerUps } = usePowerUpList();
 
   const height = 5;
@@ -11,8 +12,7 @@ export function AllPowerUps() {
 
   return (
     <>
-      <Button
-        UCID={255}
+      <GlobalButton
         width={30}
         height={height}
         left={left}
@@ -21,7 +21,7 @@ export function AllPowerUps() {
         color="title"
       >
         All available power-ups
-      </Button>
+      </GlobalButton>
       <HStack
         UCID={255}
         left={left}

@@ -10,12 +10,15 @@ import {
   useRaceControlMessage,
 } from "react-node-insim";
 
-import { log } from "../../log";
-import { useActivePowerUps } from "../activeList/ActivePowerUpsContext";
-import { usePowerUpList } from "../list/PowerUpListContext";
-import { usePowerUpQueue } from "../queue/PowerUpQueueContext";
+import { useConnectionContext } from "@/contexts/ConnectionContext";
+import { log } from "@/log";
+import { usePowerUpList } from "@/modules/powerUps/list/context/usePowerUpList";
 
-export function usePowerUpTrigger() {
+import { usePowerUpQueue } from "../queue/PowerUpQueueContext";
+import { useActivePowerUps } from "./ActivePowerUpsContext";
+
+export function useObjectPowerUpActivation() {
+  const { connection } = useConnectionContext();
   const players = usePlayers();
   const { sendRaceControlMessageToConnection } = useRaceControlMessage();
   const { powerUps } = usePowerUpList();
@@ -25,11 +28,32 @@ export function usePowerUpTrigger() {
   const { addPowerUpToQueue } = powerUpQueue;
 
   useOnPacket(PacketType.ISP_OBH, (packet: IS_OBH) => {
+    log(
+      `Connection context: UCID ${connection.UCID} - object hit: ${packet.Index}`,
+    );
+
+    const targetPlayer = players.get(packet.PLID);
+
+    if (!targetPlayer) {
+      log(`Error: No player found for PLID ${packet.PLID}`);
+      return;
+    }
+
+    log(
+      `Object hit by ${targetPlayer.PName} (PLID ${packet.PLID}, UCID ${targetPlayer.UCID})`,
+    );
+
+    if (targetPlayer.UCID !== connection.UCID) {
+      log(`Ignore UCID: ${connection.UCID}`);
+      return;
+    }
+
     const triggerObjects: ObjectIndex[] = [
       ObjectIndex.AXO_CONE_GREEN,
       ObjectIndex.AXO_CONE_RED,
       ObjectIndex.AXO_CONE_BLUE,
       ObjectIndex.AXO_CONE_YELLOW,
+      ObjectIndex.AXO_POST_RED,
     ];
 
     const isLayoutObject = Boolean(packet.OBHFlags & ObjectHitFlags.OBH_LAYOUT);
@@ -38,7 +62,7 @@ export function usePowerUpTrigger() {
     );
     const isTriggerObject = triggerObjects.includes(packet.Index);
 
-    if (!isLayoutObject || !isTriggerObject || !isObjectOnSpot) {
+    if (!isTriggerObject || !isObjectOnSpot) {
       log(
         `Not a valid power-up object hit: ${JSON.stringify({
           isLayoutObject,
@@ -46,13 +70,6 @@ export function usePowerUpTrigger() {
           isObjectOnSpot,
         })}`,
       );
-      return;
-    }
-
-    const targetPlayer = players.get(packet.PLID);
-
-    if (!targetPlayer) {
-      log(`Error: No player found for PLID ${packet.PLID}`);
       return;
     }
 
@@ -67,8 +84,10 @@ export function usePowerUpTrigger() {
     );
 
     if (!randomPowerUp.isInstant) {
-      log(`Power-up ${randomPowerUp.id} is not instant, adding to queue`);
-      addPowerUpToQueue(targetPlayer.PLID, randomPowerUp);
+      log(
+        `PLID ${targetPlayer.PLID} (UCID ${targetPlayer.UCID}) - Power-up ${randomPowerUp.id} is not instant, adding to queue`,
+      );
+      addPowerUpToQueue(randomPowerUp);
       return;
     }
 
@@ -86,7 +105,6 @@ export function usePowerUpTrigger() {
     }
 
     activePowerUps.addPowerUp(
-      targetPlayer.PLID,
       {
         ...randomPowerUp,
         timeout: randomPowerUp.timeout,

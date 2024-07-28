@@ -1,18 +1,19 @@
 import type { ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 
-import { log } from "../../log";
-import type { PlayerId } from "../../types";
+import { useConnectionContext } from "@/contexts/ConnectionContext";
+import { log } from "@/log";
+
 import type { ManualPowerUp, PowerUpId } from "../types";
 
 type QueuedPowerUp = ManualPowerUp & { queueId: PowerUpId };
 
-type Queue = Record<PlayerId, QueuedPowerUp[]>;
+type Queue = QueuedPowerUp[];
 
 export type PowerUpQueueContextType = {
-  powerUpQueueByPlayer: Queue;
-  addPowerUpToQueue: (playerId: PlayerId, powerUp: ManualPowerUp) => void;
-  removePowerUpFromQueue: (playerId: PlayerId, powerUp: QueuedPowerUp) => void;
+  powerUpQueue: Queue;
+  addPowerUpToQueue: (powerUp: ManualPowerUp) => void;
+  removePowerUpFromQueue: (powerUp: QueuedPowerUp) => void;
 };
 
 const PowerUpQueueContext = createContext<PowerUpQueueContextType | null>(null);
@@ -22,39 +23,35 @@ type PowerUpsProviderProps = {
 };
 
 export function PowerUpQueueProvider({ children }: PowerUpsProviderProps) {
-  const [powerUpQueueByPlayer, setPowerUpQueueByPlayer] = useState<Queue>({});
+  const [powerUpQueue, setPowerUpQueue] = useState<Queue>([]);
+  const { connection } = useConnectionContext();
 
   return (
     <PowerUpQueueContext.Provider
       value={{
-        powerUpQueueByPlayer,
-        addPowerUpToQueue: (playerId, powerUp) => {
+        powerUpQueue,
+        addPowerUpToQueue: (powerUp) => {
           const queuedPowerUpId = generatePowerUpId(powerUp);
 
-          log(`Adding power-up ${queuedPowerUpId} for player ${playerId}`);
-
-          setPowerUpQueueByPlayer((prevState) => ({
-            ...prevState,
-            [playerId]: [
-              ...(prevState[playerId] ?? []),
-              {
-                ...powerUp,
-                queueId: queuedPowerUpId,
-              },
-            ],
-          }));
-        },
-        removePowerUpFromQueue: (playerId, powerUpToRemove) => {
           log(
-            `Removing power-up ${powerUpToRemove.queueId} from player ${playerId}`,
+            `UCID ${connection.UCID} - Adding power-up to queue: ${queuedPowerUpId}`,
           );
 
-          setPowerUpQueueByPlayer((prevState) => ({
+          setPowerUpQueue((prevState) => [
             ...prevState,
-            [playerId]: [...(prevState[playerId] ?? [])].filter(
+            { ...powerUp, queueId: queuedPowerUpId },
+          ]);
+        },
+        removePowerUpFromQueue: (powerUpToRemove) => {
+          log(
+            `UCID ${connection.UCID} - Removing power-up ${powerUpToRemove.queueId}`,
+          );
+
+          setPowerUpQueue((prevState) =>
+            prevState.filter(
               (powerUp) => powerUp.queueId !== powerUpToRemove.queueId,
             ),
-          }));
+          );
         },
       }}
     >

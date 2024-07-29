@@ -19,6 +19,8 @@ export function useLayout() {
   }
 
   function deleteObject(object: ObjectInfo) {
+    log(`Deleting object from [${object.X}, ${object.Y}, ${object.Zbyte}]`);
+
     inSim.send(
       new IS_AXM({
         PMOAction: PMOAction.PMO_DEL_OBJECTS,

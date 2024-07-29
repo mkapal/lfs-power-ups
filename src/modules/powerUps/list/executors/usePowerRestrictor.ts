@@ -10,7 +10,7 @@ export const usePowerRestrictor: InstantPowerUpHook = () => {
 
   return {
     name: "^0Low Power",
-    timeout: 10_000,
+    timeout: 30_000,
     isInstant: true,
     execute: ({ player }) => {
       log(`${logPlayer(player)} - power restrictor execute`);

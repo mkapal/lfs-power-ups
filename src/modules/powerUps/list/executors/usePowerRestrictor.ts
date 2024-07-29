@@ -29,17 +29,16 @@ export const usePowerRestrictor: InstantPowerUpHook = () => {
         }),
       ),
     cleanup: ({ player }) => {
-      // const playerPowerUps = powerUpQueueByPlayer[player.PLID] ?? [];
-      // const hasOtherActiveRestrictors = playerPowerUps.some(
-      //   (powerUp) => powerUp.id === "powerRestrictor",
-      // );
-      //
-      // if (hasOtherActiveRestrictors) {
-      //   log(
-      //     `Player ${player.PName}^8 already has an active power restrictor - do not cleanup`,
-      //   );
-      //   return;
-      // }
+      const hasOtherActiveRestrictors = powerUpQueue.some(
+        (powerUp) => powerUp.id === "powerRestrictor",
+      );
+
+      if (hasOtherActiveRestrictors) {
+        log(
+          `Player ${player.PName}^8 already has an active power restrictor - do not cleanup`,
+        );
+        return;
+      }
 
       inSim.send(
         new IS_PLH({

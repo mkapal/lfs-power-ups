@@ -1,13 +1,13 @@
 import type { IS_OBH } from "node-insim/packets";
 import type { Player } from "react-node-insim";
 
-import type { Queue } from "./queue/PowerUpQueueContext";
+import type { ActivePowerUps } from "./active/ActivePowerUpsContext";
 
 export type PowerUpId = string;
 
 type BasePowerUpExecutorContext = {
   player: Player;
-  powerUpQueue: Queue;
+  activePowerUps: { current: ActivePowerUps | undefined };
 };
 
 export type ManualPowerUpExecutorContext = BasePowerUpExecutorContext;

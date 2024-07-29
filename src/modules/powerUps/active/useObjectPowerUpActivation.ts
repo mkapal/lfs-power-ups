@@ -21,23 +21,16 @@ export function useObjectPowerUpActivation() {
   const players = usePlayers();
   const { sendRaceControlMessageToConnection } = useRaceControlMessage();
   const { powerUps } = usePowerUpList();
-  const { addPowerUpToQueue, powerUpQueue } = usePowerUpQueue();
+  const { addPowerUpToQueue } = usePowerUpQueue();
   const activePowerUps = useActivePowerUps();
 
   useOnPacket(PacketType.ISP_OBH, (packet: IS_OBH) => {
-    log(`Object hit: ${packet.Index}`);
-
     const player = players.get(packet.PLID);
 
     if (!player) {
       log(`Error: No player found for PLID ${packet.PLID}`);
       return;
     }
-
-    log(
-      `Object hit by ${player.PName} (PLID ${packet.PLID}, UCID ${player.UCID})`,
-    );
-
     if (player.UCID !== connection.UCID) {
       return;
     }
@@ -78,26 +71,28 @@ export function useObjectPowerUpActivation() {
       return;
     }
 
-    log(
-      `Player ${player.PLID} - Executing instant power-up: ${randomPowerUp.id}`,
-    );
-
     randomPowerUp.execute({
       player,
       objectHitPacket: packet,
-      powerUpQueue,
+      activePowerUps: {
+        current: activePowerUps.activePowerUps,
+      },
     });
 
     if (!randomPowerUp.timeout) {
       return;
     }
 
-    activePowerUps.addPowerUp(randomPowerUp, randomPowerUp.timeout, () => {
-      randomPowerUp.cleanup?.({
-        objectHitPacket: packet,
-        player,
-        powerUpQueue,
-      });
-    });
+    activePowerUps.addPowerUp(
+      randomPowerUp,
+      randomPowerUp.timeout,
+      ({ activePowerUpsRef }) => {
+        randomPowerUp.cleanup?.({
+          objectHitPacket: packet,
+          player,
+          activePowerUps: activePowerUpsRef,
+        });
+      },
+    );
   });
 }

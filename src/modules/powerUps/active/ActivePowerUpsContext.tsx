@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useEffect, useRef } from "react";
 import { createContext, useContext, useState } from "react";
 
 import { useConnectionContext } from "@/contexts/ConnectionContext";
@@ -10,14 +11,18 @@ type QueuedPowerUp = PowerUp & {
   timeRemainingMs: number;
 };
 
-type ActivePowerUps = QueuedPowerUp[];
+export type ActivePowerUps = QueuedPowerUp[];
 
 export type ActivePowerUpsContextType = {
   activePowerUps: ActivePowerUps;
   addPowerUp: (
     powerUp: PowerUp,
     timeoutMs: number,
-    onTimeout?: () => void,
+    onTimeout?: ({
+      activePowerUpsRef,
+    }: {
+      activePowerUpsRef: { current: ActivePowerUps | undefined };
+    }) => void,
   ) => QueuedPowerUp;
 };
 
@@ -34,11 +39,20 @@ export function ActivePowerUpsProvider({
 }: ActivePowerUpsProviderProps) {
   const [activePowerUps, setActivePowerUps] = useState<QueuedPowerUp[]>([]);
   const { log } = useConnectionContext();
+  const activePowerUpsRef = useRef<ActivePowerUps>();
+
+  useEffect(() => {
+    activePowerUpsRef.current = activePowerUps;
+  }, [activePowerUps]);
 
   const addPowerUp = (
     powerUp: PowerUp,
     timeoutMs: number,
-    onTimeout?: () => void,
+    onTimeout?: ({
+      activePowerUpsRef,
+    }: {
+      activePowerUpsRef: { current: ActivePowerUps | undefined };
+    }) => void,
   ) => {
     const queuedPowerUpId = generatePowerUpId(powerUp);
 
@@ -60,7 +74,7 @@ export function ActivePowerUpsProvider({
     setTimeout(() => {
       removePowerUp(queuedPowerUpId);
       clearInterval(countdownInterval);
-      onTimeout?.();
+      onTimeout?.({ activePowerUpsRef });
     }, powerUp.timeout);
 
     return queuedPowerUp;

@@ -1,7 +1,7 @@
 import { IS_PLH, PlayerHCap, PlayerHCapFlags } from "node-insim/packets";
 import { useInSim } from "react-node-insim";
 
-import { log } from "@/utils/log";
+import { log, logPlayer } from "@/utils/log";
 
 import type { InstantPowerUpHook } from "../../types";
 
@@ -10,9 +10,10 @@ export const usePowerRestrictor: InstantPowerUpHook = () => {
 
   return {
     name: "^0Low Power",
-    timeout: 20_000,
+    timeout: 10_000,
     isInstant: true,
-    execute: ({ player }) =>
+    execute: ({ player }) => {
+      log(`${logPlayer(player)} - power restrictor execute`);
       inSim.send(
         new IS_PLH({
           NumP: 1,
@@ -25,15 +26,23 @@ export const usePowerRestrictor: InstantPowerUpHook = () => {
             }),
           ],
         }),
-      ),
-    cleanup: ({ player, powerUpQueue }) => {
-      const hasOtherActiveRestrictors = powerUpQueue.some(
-        (powerUp) => powerUp.id === "powerRestrictor",
       );
+    },
+    cleanup: ({ player, activePowerUps }) => {
+      log(`${logPlayer(player)} - power restrictor cleanup`);
+      log(
+        `Active power-ups: ${JSON.stringify(activePowerUps.current?.map((p) => p.queueId))}`,
+      );
+
+      const hasOtherActiveRestrictors =
+        activePowerUps.current &&
+        activePowerUps.current.filter(
+          (powerUp) => powerUp.id === "powerRestrictor",
+        ).length > 1;
 
       if (hasOtherActiveRestrictors) {
         log(
-          `Player ${player.PName}^8 already has an active power restrictor - do not cleanup`,
+          `${logPlayer(player)} already has an active power restrictor - do not cleanup`,
         );
         return;
       }

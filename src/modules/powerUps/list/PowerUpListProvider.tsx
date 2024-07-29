@@ -25,8 +25,8 @@ export function PowerUpListProvider({ children }: PowerUpsProviderProps) {
 
   const powerUpMap = {
     powerRestrictor,
-    hayBale,
-    reset,
+    // hayBale,
+    // reset,
   };
 
   const powerUps = Object.entries(powerUpMap).map(

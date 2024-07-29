@@ -4,9 +4,9 @@ import { useOnConnect } from "react-node-insim";
 import { ButtonsForEachConnection } from "./components/ButtonsForEachConnection";
 import { GlobalButton } from "./components/GlobalButton";
 import { GlobalProviders } from "./GlobalProviders";
-import { log } from "./log";
 import { PowerUpList } from "./modules/powerUps/list/PowerUpList";
 import { PowerUps } from "./modules/powerUps/PowerUps";
+import { log } from "./utils/log";
 
 type AppProps = {
   name: string;

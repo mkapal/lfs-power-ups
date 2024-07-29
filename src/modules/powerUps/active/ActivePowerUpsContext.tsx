@@ -2,14 +2,10 @@ import type { ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 
 import { useConnectionContext } from "@/contexts/ConnectionContext";
-import { log } from "@/log";
-import type { WithRequired } from "@/types";
 
 import type { PowerUp, PowerUpId } from "../types";
 
-type PowerUpWithTimeout = WithRequired<PowerUp, "timeout">;
-
-type QueuedPowerUp = PowerUpWithTimeout & {
+type QueuedPowerUp = PowerUp & {
   queueId: PowerUpId;
   timeRemainingMs: number;
 };
@@ -19,7 +15,8 @@ type ActivePowerUps = QueuedPowerUp[];
 export type ActivePowerUpsContextType = {
   activePowerUps: ActivePowerUps;
   addPowerUp: (
-    powerUp: PowerUpWithTimeout,
+    powerUp: PowerUp,
+    timeoutMs: number,
     onTimeout?: () => void,
   ) => QueuedPowerUp;
 };
@@ -36,17 +33,21 @@ export function ActivePowerUpsProvider({
   children,
 }: ActivePowerUpsProviderProps) {
   const [activePowerUps, setActivePowerUps] = useState<QueuedPowerUp[]>([]);
-  const { connection } = useConnectionContext();
+  const { log } = useConnectionContext();
 
-  const addPowerUp = (powerUp: PowerUpWithTimeout, onTimeout?: () => void) => {
+  const addPowerUp = (
+    powerUp: PowerUp,
+    timeoutMs: number,
+    onTimeout?: () => void,
+  ) => {
     const queuedPowerUpId = generatePowerUpId(powerUp);
 
-    log(`UCID ${connection.UCID} - Activating power-up ${queuedPowerUpId}`);
+    log(`Activating power-up ${queuedPowerUpId}`);
 
     const queuedPowerUp: QueuedPowerUp = {
       ...powerUp,
       queueId: queuedPowerUpId,
-      timeRemainingMs: powerUp.timeout,
+      timeRemainingMs: timeoutMs,
     };
 
     setActivePowerUps((prevState) => [...prevState, queuedPowerUp]);
@@ -66,7 +67,7 @@ export function ActivePowerUpsProvider({
   };
 
   const removePowerUp = (powerUpId: PowerUpId) => {
-    log(`UCID ${connection.UCID} - Removing power-up ${powerUpId}`);
+    log(`Removing power-up ${powerUpId}`);
 
     setActivePowerUps((prevState) =>
       prevState.filter((queuedPowerUp) => queuedPowerUp.queueId !== powerUpId),
@@ -88,7 +89,7 @@ export function ActivePowerUpsProvider({
           const timeRemainingMs = queuedPowerUp.timeRemainingMs + timeToAddMs;
 
           log(
-            `UCID ${connection.UCID} - Updating time remaining for power-up ${powerUpId} (${timeRemainingMs} ms)`,
+            `Updating time remaining for power-up ${powerUpId} (${timeRemainingMs} ms)`,
           );
           return {
             ...queuedPowerUp,

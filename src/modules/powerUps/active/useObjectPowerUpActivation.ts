@@ -11,40 +11,34 @@ import {
 } from "react-node-insim";
 
 import { useConnectionContext } from "@/contexts/ConnectionContext";
-import { log } from "@/log";
 
 import { usePowerUpList } from "../list/usePowerUpList";
 import { usePowerUpQueue } from "../queue/PowerUpQueueContext";
 import { useActivePowerUps } from "./ActivePowerUpsContext";
 
 export function useObjectPowerUpActivation() {
-  const { connection } = useConnectionContext();
+  const { connection, log } = useConnectionContext();
   const players = usePlayers();
   const { sendRaceControlMessageToConnection } = useRaceControlMessage();
   const { powerUps } = usePowerUpList();
-  const powerUpQueue = usePowerUpQueue();
+  const { addPowerUpToQueue, powerUpQueue } = usePowerUpQueue();
   const activePowerUps = useActivePowerUps();
 
-  const { addPowerUpToQueue } = powerUpQueue;
-
   useOnPacket(PacketType.ISP_OBH, (packet: IS_OBH) => {
-    log(
-      `Connection context: UCID ${connection.UCID} - object hit: ${packet.Index}`,
-    );
+    log(`Object hit: ${packet.Index}`);
 
-    const targetPlayer = players.get(packet.PLID);
+    const player = players.get(packet.PLID);
 
-    if (!targetPlayer) {
+    if (!player) {
       log(`Error: No player found for PLID ${packet.PLID}`);
       return;
     }
 
     log(
-      `Object hit by ${targetPlayer.PName} (PLID ${packet.PLID}, UCID ${targetPlayer.UCID})`,
+      `Object hit by ${player.PName} (PLID ${packet.PLID}, UCID ${player.UCID})`,
     );
 
-    if (targetPlayer.UCID !== connection.UCID) {
-      log(`Ignore UCID: ${connection.UCID}`);
+    if (player.UCID !== connection.UCID) {
       return;
     }
 
@@ -73,48 +67,37 @@ export function useObjectPowerUpActivation() {
       return;
     }
 
-    log(`Power-up object hit by ${targetPlayer.PName} (PLID ${packet.PLID})`);
+    log(`Power-up object hit by ${player.PName} (PLID ${packet.PLID})`);
 
     const randomPowerUp = powerUps[Math.floor(Math.random() * powerUps.length)];
 
-    sendRaceControlMessageToConnection(
-      targetPlayer.UCID,
-      randomPowerUp.name,
-      4_000,
-    );
+    sendRaceControlMessageToConnection(player.UCID, randomPowerUp.name, 4_000);
 
     if (!randomPowerUp.isInstant) {
-      log(
-        `PLID ${targetPlayer.PLID} (UCID ${targetPlayer.UCID}) - Power-up ${randomPowerUp.id} is not instant, adding to queue`,
-      );
       addPowerUpToQueue(randomPowerUp);
       return;
     }
 
     log(
-      `Executing instant power-up for player ${targetPlayer.PLID}: ${randomPowerUp.id}`,
+      `Player ${player.PLID} - Executing instant power-up: ${randomPowerUp.id}`,
     );
 
     randomPowerUp.execute({
-      player: targetPlayer,
+      player,
       objectHitPacket: packet,
+      powerUpQueue,
     });
 
     if (!randomPowerUp.timeout) {
       return;
     }
 
-    activePowerUps.addPowerUp(
-      {
-        ...randomPowerUp,
-        timeout: randomPowerUp.timeout,
-      },
-      () => {
-        randomPowerUp.cleanup?.({
-          objectHitPacket: packet,
-          player: targetPlayer,
-        });
-      },
-    );
+    activePowerUps.addPowerUp(randomPowerUp, randomPowerUp.timeout, () => {
+      randomPowerUp.cleanup?.({
+        objectHitPacket: packet,
+        player,
+        powerUpQueue,
+      });
+    });
   });
 }

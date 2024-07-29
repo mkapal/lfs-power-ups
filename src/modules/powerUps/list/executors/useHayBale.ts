@@ -1,9 +1,9 @@
 import { ObjectIndex, ObjectInfo } from "node-insim/packets";
 
-import { log } from "@/log";
 import { useLayout } from "@/modules/layout/useLayout";
 import { useMultiCarInfoRef } from "@/modules/multiCarInfo/useMultiCarInfoRef";
 import { compCarAngleToRadians } from "@/utils";
+import { log } from "@/utils/log";
 
 import type { ManualPowerUpHook } from "../../types";
 

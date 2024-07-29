@@ -2,13 +2,12 @@ import type { ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 
 import { useConnectionContext } from "@/contexts/ConnectionContext";
-import { log } from "@/log";
 
 import type { ManualPowerUp, PowerUpId } from "../types";
 
 type QueuedPowerUp = ManualPowerUp & { queueId: PowerUpId };
 
-type Queue = QueuedPowerUp[];
+export type Queue = QueuedPowerUp[];
 
 export type PowerUpQueueContextType = {
   powerUpQueue: Queue;
@@ -24,7 +23,7 @@ type PowerUpsProviderProps = {
 
 export function PowerUpQueueProvider({ children }: PowerUpsProviderProps) {
   const [powerUpQueue, setPowerUpQueue] = useState<Queue>([]);
-  const { connection } = useConnectionContext();
+  const { log } = useConnectionContext();
 
   return (
     <PowerUpQueueContext.Provider
@@ -33,9 +32,7 @@ export function PowerUpQueueProvider({ children }: PowerUpsProviderProps) {
         addPowerUpToQueue: (powerUp) => {
           const queuedPowerUpId = generatePowerUpId(powerUp);
 
-          log(
-            `UCID ${connection.UCID} - Adding power-up to queue: ${queuedPowerUpId}`,
-          );
+          log(`Adding power-up to queue: ${queuedPowerUpId}`);
 
           setPowerUpQueue((prevState) => [
             ...prevState,
@@ -43,9 +40,7 @@ export function PowerUpQueueProvider({ children }: PowerUpsProviderProps) {
           ]);
         },
         removePowerUpFromQueue: (powerUpToRemove) => {
-          log(
-            `UCID ${connection.UCID} - Removing power-up ${powerUpToRemove.queueId}`,
-          );
+          log(`Removing power-up ${powerUpToRemove.queueId}`);
 
           setPowerUpQueue((prevState) =>
             prevState.filter(

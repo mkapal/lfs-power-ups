@@ -2,7 +2,7 @@ import { PacketType } from "node-insim/packets";
 import { useOnPacket, usePlayers } from "react-node-insim";
 
 import { useConnectionContext } from "@/contexts/ConnectionContext";
-import { log } from "@/log";
+import { log } from "@/utils/log";
 
 import { usePowerUpQueue } from "./PowerUpQueueContext";
 
@@ -43,6 +43,7 @@ export function useManualPowerUpActivation() {
 
     firstPowerUp.execute({
       player,
+      powerUpQueue,
     });
 
     removePowerUpFromQueue(firstPowerUp);

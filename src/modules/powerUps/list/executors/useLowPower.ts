@@ -5,7 +5,7 @@ import { log, logPlayer } from "@/utils/log";
 
 import type { InstantPowerUpHook } from "../../types";
 
-export const usePowerRestrictor: InstantPowerUpHook = () => {
+export const useLowPower: InstantPowerUpHook = () => {
   const inSim = useInSim();
 
   return {
@@ -13,7 +13,7 @@ export const usePowerRestrictor: InstantPowerUpHook = () => {
     timeout: 30_000,
     isInstant: true,
     execute: ({ player }) => {
-      log(`${logPlayer(player)} - power restrictor execute`);
+      log(`${logPlayer(player)} - low power execute`);
       inSim.send(
         new IS_PLH({
           NumP: 1,
@@ -29,20 +29,16 @@ export const usePowerRestrictor: InstantPowerUpHook = () => {
       );
     },
     cleanup: ({ player, activePowerUps }) => {
-      log(`${logPlayer(player)} - power restrictor cleanup`);
-      log(
-        `Active power-ups: ${JSON.stringify(activePowerUps.current?.map((p) => p.queueId))}`,
-      );
+      log(`${logPlayer(player)} - low power cleanup`);
 
-      const hasOtherActiveRestrictors =
+      const hasOtherActivePowerUps =
         activePowerUps.current &&
-        activePowerUps.current.filter(
-          (powerUp) => powerUp.id === "powerRestrictor",
-        ).length > 1;
+        activePowerUps.current.filter((powerUp) => powerUp.id === "lowPower")
+          .length > 1;
 
-      if (hasOtherActiveRestrictors) {
+      if (hasOtherActivePowerUps) {
         log(
-          `${logPlayer(player)} already has an active power restrictor - do not cleanup`,
+          `${logPlayer(player)} already has an active low power power-up - do not cleanup`,
         );
         return;
       }

@@ -4,7 +4,7 @@ import type { PowerUp } from "@/modules/powerUps/types";
 
 import { useCarReset } from "./executors/useCarReset";
 import { useHayBale } from "./executors/useHayBale";
-import { usePowerRestrictor } from "./executors/usePowerRestrictor";
+import { useLowPower } from "./executors/useLowPower";
 
 type PowerUpListContextType = {
   powerUps: PowerUp[];
@@ -19,12 +19,12 @@ type PowerUpsProviderProps = {
 };
 
 export function PowerUpListProvider({ children }: PowerUpsProviderProps) {
-  const powerRestrictor = usePowerRestrictor();
+  const lowPower = useLowPower();
   const hayBale = useHayBale();
   const reset = useCarReset();
 
   const powerUpMap = {
-    powerRestrictor,
+    lowPower,
     // hayBale,
     // reset,
   };

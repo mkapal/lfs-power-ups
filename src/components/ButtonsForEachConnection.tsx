@@ -7,7 +7,9 @@ export type ButtonsByConnectionProps = {
   children: ReactNode;
 };
 
-export function ButtonsByConnection({ children }: ButtonsByConnectionProps) {
+export function ButtonsForEachConnection({
+  children,
+}: ButtonsByConnectionProps) {
   const connections = useConnections();
 
   return connections.map((connection) => (

@@ -1,9 +1,10 @@
 import { createContext, type ReactNode } from "react";
 
-import { useCarReset } from "@/modules/powerUps/list/executors/useCarReset";
-import { useHayBale } from "@/modules/powerUps/list/executors/useHayBale";
-import { usePowerRestrictor } from "@/modules/powerUps/list/executors/usePowerRestrictor";
 import type { PowerUp } from "@/modules/powerUps/types";
+
+import { useCarReset } from "./executors/useCarReset";
+import { useHayBale } from "./executors/useHayBale";
+import { usePowerRestrictor } from "./executors/usePowerRestrictor";
 
 type PowerUpListContextType = {
   powerUps: PowerUp[];

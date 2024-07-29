@@ -1,11 +1,18 @@
 import type { ReactNode } from "react";
+import { ConnectionsProvider, PlayersProvider } from "react-node-insim";
 
-import { PowerUpListProvider } from "@/modules/powerUps/list/context/PowerUpListProvider";
+import { PowerUpListProvider } from "@/modules/powerUps/list/PowerUpListProvider";
 
 export type ProvidersProps = {
   children: ReactNode;
 };
 
 export function GlobalProviders({ children }: ProvidersProps) {
-  return <PowerUpListProvider>{children}</PowerUpListProvider>;
+  return (
+    <ConnectionsProvider>
+      <PlayersProvider>
+        <PowerUpListProvider>{children}</PowerUpListProvider>
+      </PlayersProvider>
+    </ConnectionsProvider>
+  );
 }

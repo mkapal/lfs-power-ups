@@ -3,8 +3,9 @@ import { ObjectIndex, ObjectInfo } from "node-insim/packets";
 import { log } from "@/log";
 import { useLayout } from "@/modules/layout/useLayout";
 import { useMultiCarInfoRef } from "@/modules/multiCarInfo/useMultiCarInfoRef";
-import type { ManualPowerUpHook } from "@/modules/powerUps/types";
 import { compCarAngleToRadians } from "@/utils";
+
+import type { ManualPowerUpHook } from "../../types";
 
 export const useHayBale: ManualPowerUpHook = () => {
   const multiCarInfoRef = useMultiCarInfoRef();

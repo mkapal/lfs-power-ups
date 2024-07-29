@@ -12,8 +12,8 @@ import {
 
 import { useConnectionContext } from "@/contexts/ConnectionContext";
 import { log } from "@/log";
-import { usePowerUpList } from "@/modules/powerUps/list/context/usePowerUpList";
 
+import { usePowerUpList } from "../list/usePowerUpList";
 import { usePowerUpQueue } from "../queue/PowerUpQueueContext";
 import { useActivePowerUps } from "./ActivePowerUpsContext";
 

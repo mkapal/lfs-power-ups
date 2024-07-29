@@ -1,7 +1,8 @@
 import { Button, HStack } from "react-node-insim";
 
 import { GlobalButton } from "@/components/GlobalButton";
-import { usePowerUpList } from "@/modules/powerUps/list/context/usePowerUpList";
+
+import { usePowerUpList } from "./usePowerUpList";
 
 export function PowerUpList() {
   const { powerUps } = usePowerUpList();

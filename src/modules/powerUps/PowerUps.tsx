@@ -1,10 +1,9 @@
-import { ActivePowerUps } from "@/modules/powerUps/active/ActivePowerUps";
-import { PowerUpQueue } from "@/modules/powerUps/queue/PowerUpQueue";
-
+import { ActivePowerUps } from "./active/ActivePowerUps";
 import { ActivePowerUpsProvider } from "./active/ActivePowerUpsContext";
+import { PowerUpQueue } from "./queue/PowerUpQueue";
 import { PowerUpQueueProvider } from "./queue/PowerUpQueueContext";
 
-export function PowerUpsForConnection() {
+export function PowerUps() {
   return (
     <PowerUpQueueProvider>
       <ActivePowerUpsProvider>

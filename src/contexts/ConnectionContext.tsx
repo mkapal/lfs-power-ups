@@ -14,7 +14,6 @@ const ConnectionContext = createContext<ConnectionContextType | null>(null);
 type ConnectionContextProviderProps = {
   children: ReactNode;
   connection: Connection;
-  log: (...args: unknown[]) => void;
 };
 
 export function ConnectionContextProvider({

@@ -1,5 +1,6 @@
 {
   "name": "lfs-power-ups",
+  "description": "LFS Power Ups",
   "version": "0.0.0",
   "main": "dist/index.cjs",
   "type": "module",
@@ -18,31 +19,31 @@
     "lint:fix": "eslint \"./src/**/*\" --ext .js,.ts --fix"
   },
   "dependencies": {
-    "debug": "^4.3.4",
-    "dotenv": "^16.3.1",
-    "node-insim": "4.0.0",
-    "react": "^18.2.0",
-    "react-node-insim": "^0.0.6"
+    "debug": "^4.4.1",
+    "dotenv": "^17.2.2",
+    "node-insim": "5.0.1",
+    "react": "^18.3.1",
+    "react-node-insim": "^0.2.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.8",
-    "@types/node": "^20.4.0",
+    "@types/node": "^24.3.1",
     "@types/react": "18.2.46",
-    "@typescript-eslint/eslint-plugin": "^6.7.2",
-    "@typescript-eslint/parser": "^6.7.2",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
-    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.0.0",
-    "tsup": "^8.0.1",
-    "tsx": "^4.7.0",
-    "typescript": "^5.1.6"
+    "prettier": "^3.6.2",
+    "tsup": "8.5.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   },
   "files": [
     "**/*.js",
     "**/*.d.ts"
   ],
-  "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a"
+  "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67"
 }
